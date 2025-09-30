@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net"
 	"sync"
 
@@ -49,6 +50,7 @@ func (b *Broker) Subscribe(topic string, conn net.Conn) {
 		return
 	}
 
+	fmt.Println("[debug] - subscribing in a topic: ", topic)
 	b.Subscribers[topic] = append(b.Subscribers[topic], conn)
 }
 
@@ -83,7 +85,9 @@ func (b *Broker) Publish(topic string, msg_body []byte) {
 		Msg: msg_body,
 	}
 
+	fmt.Println("[debug] - publishing in a topic: ", topic)
 	for _, conn := range b.Subscribers[topic] {
+		fmt.Println("[debug] - sending to: ", conn.RemoteAddr())
 		communication.SendMessage(conn, msg)
 	}
 }

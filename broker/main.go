@@ -7,22 +7,18 @@ import (
 	"github.com/vini464/distributed_system/communication"
 )
 
-const (
-	SERVERTYPE = "tcp"
-	HOSTNAME   = "broker:7575"
-)
-
 func main() {
-	listener, err := net.Listen("tcp", "broker")
+	listener, err := net.Listen(communication.SERVERTYPE, net.JoinHostPort(communication.HOSTNAME, communication.SERVERPORT))
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("[debug] - server online")
 
 	broker := NewBroker()
 
 	for {
 		conn, err := listener.Accept()
-		if err != nil {
+		if err == nil {
 			go handle_connection(conn, broker)
 		}
 	}
@@ -41,6 +37,7 @@ func main() {
 // [TYPE: status; VALUE: OK/ERROR]
 // [TYPE: msg; VALUE: msg_body]
 func handle_connection(conn net.Conn, broker *Broker) {
+	fmt.Println("[debug] - New client connected: ", conn.RemoteAddr())
 	defer conn.Close()
 	communication_chan := make(chan communication.Message)
 
@@ -61,10 +58,13 @@ func handle_connection(conn net.Conn, broker *Broker) {
 		case msg := <-communication_chan:
 			switch msg.Cmd {
 			case communication.SUBSCRIBE:
+				fmt.Println("[debug] - subs")
 				broker.Subscribe(msg.Tpc, conn)
 			case communication.UNSUB:
+				fmt.Println("[debug] - unsub")
 				broker.Unsubscribe(msg.Tpc, conn)
 			case communication.PUBLISH:
+				fmt.Println("[debug] - Publish")
 				broker.Publish(msg.Tpc, msg.Msg)
 			}
 		case <-broker.Quit:

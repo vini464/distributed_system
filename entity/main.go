@@ -12,17 +12,18 @@ import (
 
 func main() {
 	var logs []string
-	conn, err := net.Dial("tcp", "broker")
+	conn, err := net.Dial(communication.SERVERTYPE, net.JoinHostPort(communication.HOSTNAME, communication.SERVERPORT))
 	if err != nil {
 		panic(err)
 	}
 	go func() {
 		var res communication.Message
-		for err != nil {
-			err = communication.ReceiveMessage(conn, &res)
-			if err == nil {
-				logs = append(logs, string(res.Msg))
+		for {
+			err := communication.ReceiveMessage(conn, &res)
+			if err != nil {
+				break
 			}
+			logs = append(logs, string(res.Msg))
 		}
 	}()
 	for {
@@ -54,7 +55,7 @@ func main() {
 			topic := input("insert the topic's name: ")
 			msg_body := []byte(input("type a message: "))
 			msg := communication.Message{
-				Cmd: communication.MESSAGE,
+				Cmd: communication.PUBLISH,
 				Tpc: topic,
 				Msg: msg_body,
 			}
