@@ -21,7 +21,7 @@ import (
 type Request struct {
 	Cmd string `json:"cmd"`
 	Tpc string `json:"tpc"`
-	Msg []byte `json:"msg,omitempty"` // description about this field is on the Server-Client protocol file 
+	Msg []byte `json:"msg,omitempty"` // description about this field is on the Server-Client protocol file
 }
 
 type Response struct {
@@ -35,6 +35,7 @@ type Sendable interface {
 
 // some cmd and types
 const (
+	UNSUB     = "USUB"
 	SUBSCRIBE = "SUB"
 	PUBLISH   = "PUB"
 

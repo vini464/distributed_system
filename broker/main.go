@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"net"
+
+	"github.com/vini464/distributed_system/communication"
 )
 
 const (
@@ -40,24 +42,34 @@ func main() {
 // [TYPE: msg; VALUE: msg_body]
 func handle_connection(conn net.Conn, broker *Broker) {
 	defer conn.Close()
-	sendding_chan := make(chan string)
+	communication_chan := make(chan communication.Request)
 
 	// receiving a client message
 	go func() {
+		var msg communication.Request
 		for {
-
+			err := communication.ReceiveMessage(conn, &msg)
+			if err != nil {
+				return
+			}
+			communication_chan <- msg
 		}
 	}()
 
 	for {
 		select {
-		case msg := <-sendding_chan:
-			//TODO: send message to client
-			fmt.Println(msg)
+		case msg := <-communication_chan:
+			switch msg.Cmd {
+			case communication.SUBSCRIBE:
+				broker.Subscribe(msg.Tpc, conn)
+			case communication.UNSUB:
+				broker.Unsubscribe(msg.Tpc, conn)
+			case communication.PUBLISH:
+				broker.Publish(msg.Tpc, msg.Msg)
+			}
 		case <-broker.Quit:
 			fmt.Println("[DEBUG] - Broker is stopped")
 			return
 		}
-
 	}
 }
