@@ -41,7 +41,6 @@ func main() {
 func handle_connection(conn net.Conn, broker *Broker) {
 	defer conn.Close()
 	sendding_chan := make(chan string)
-	receiving_chan := make(chan string)
 
 	// receiving a client message
 	go func() {
