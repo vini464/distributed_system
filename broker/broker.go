@@ -78,9 +78,9 @@ func (b *Broker) Publish(topic string, msg_body []byte) {
 		return
 	}
 
-	msg := communication.Response{
-		Type:  communication.MESSAGE,
-		Value: msg_body,
+	msg := communication.Message{
+		Cmd:  communication.MESSAGE,
+		Msg: msg_body,
 	}
 
 	for _, conn := range b.Subscribers[topic] {

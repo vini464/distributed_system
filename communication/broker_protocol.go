@@ -18,19 +18,10 @@ import (
 // [TYPE: status; VALUE: OK/ERROR] -> when a client ask for something (like subscribe or post some message)
 // [TYPE: msg; VALUE: msg_body]    -> when the broker has to send a broadcast (a publisher post something, all subs will receive this)
 
-type Request struct {
+type Message struct {
 	Cmd string `json:"cmd"`
-	Tpc string `json:"tpc"`
+	Tpc string `json:"tpc,omitempty"`
 	Msg []byte `json:"msg,omitempty"` // description about this field is on the Server-Client protocol file
-}
-
-type Response struct {
-	Type  string `json:"type"`
-	Value []byte `json:"value"`
-}
-
-type Sendable interface {
-	Request | Response
 }
 
 // some cmd and types
@@ -43,7 +34,7 @@ const (
 	MESSAGE = "MSG"
 )
 
-func SendMessage[T Sendable](conn net.Conn, message T) error {
+func SendMessage(conn net.Conn, message Message) error {
 	serialized, err := json.Marshal(message)
 	if err != nil {
 		return err
@@ -58,7 +49,7 @@ func SendMessage[T Sendable](conn net.Conn, message T) error {
 	return err
 }
 
-func ReceiveMessage[T Sendable](conn net.Conn, message *T) error {
+func ReceiveMessage(conn net.Conn, message *Message) error {
 	// first: receives the message length
 	header := make([]byte, 4)
 	bytes_received := 0

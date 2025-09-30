@@ -42,11 +42,11 @@ func main() {
 // [TYPE: msg; VALUE: msg_body]
 func handle_connection(conn net.Conn, broker *Broker) {
 	defer conn.Close()
-	communication_chan := make(chan communication.Request)
+	communication_chan := make(chan communication.Message)
 
 	// receiving a client message
 	go func() {
-		var msg communication.Request
+		var msg communication.Message
 		for {
 			err := communication.ReceiveMessage(conn, &msg)
 			if err != nil {
