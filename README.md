@@ -3,7 +3,7 @@
 ## Rules;
     * sames as the v1;
 
-## Archteture
+## Architecture
     -----  Client Server Communication -------
 
     
