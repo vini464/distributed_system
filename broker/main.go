@@ -3,12 +3,15 @@ package main
 import (
 	"fmt"
 	"net"
+	"os"
 
 	"github.com/vini464/distributed_system/communication"
 )
 
+var HOSTNAME = os.Getenv("HOSTNAME")
+
 func main() {
-	listener, err := net.Listen(communication.SERVERTYPE, net.JoinHostPort(communication.HOSTNAME, communication.SERVERPORT))
+	listener, err := net.Listen(communication.SERVERTYPE, net.JoinHostPort(HOSTNAME, communication.SERVERPORT))
 	if err != nil {
 		panic(err)
 	}

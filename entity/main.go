@@ -10,9 +10,12 @@ import (
 	"github.com/vini464/distributed_system/communication"
 )
 
+// enviroment variables
+var BROKER = os.Getenv("BROKER")
+
 func main() {
 	var logs []string
-	conn, err := net.Dial(communication.SERVERTYPE, net.JoinHostPort(communication.HOSTNAME, communication.SERVERPORT))
+	conn, err := net.Dial(communication.SERVERTYPE, net.JoinHostPort(BROKER, communication.BROKERPORT))
 	if err != nil {
 		panic(err)
 	}

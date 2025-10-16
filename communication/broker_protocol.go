@@ -34,11 +34,10 @@ const (
 	MESSAGE = "MSG"
 )
 
-// broker communication info
 const (
 	SERVERTYPE = "tcp"
-	HOSTNAME   = "broker"
-	SERVERPORT = "7575"
+	BROKERPORT = "7575"
+	SERVERPORT = "8080"
 )
 
 func SendMessage(conn net.Conn, message Message) error {
